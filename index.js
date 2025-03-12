@@ -1,11 +1,18 @@
 const express = require("express");
 const path = require("path");
 const os = require("os");
+const compression = require("compression");
+const expressStaticGzip = require("express-static-gzip");
 
 const app = express();
 const PORT = 3000;
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(compression());
+
+app.use("/", expressStaticGzip(path.join(__dirname, "public"), {
+    enableBrotli: true,
+    orderPreference: ["br", "gz"]
+}));
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
