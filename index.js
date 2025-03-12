@@ -11,7 +11,18 @@ app.use(compression());
 
 app.use("/", expressStaticGzip(path.join(__dirname, "public"), {
     enableBrotli: true,
-    orderPreference: ["br", "gz"]
+    orderPreference: ["br", "gz"],
+    serveStatic: {
+        setHeaders: (res, path) => {
+            if (path.endsWith(".br")) {
+                res.setHeader("Content-Encoding", "br");
+                res.setHeader("Content-Type", "application/javascript");
+            } else if (path.endsWith(".gz")) {
+                res.setHeader("Content-Encoding", "gzip");
+                res.setHeader("Content-Type", "application/javascript");
+            }
+        }
+    }
 }));
 
 app.get("/", (req, res) => {
